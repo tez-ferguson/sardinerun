@@ -5,7 +5,7 @@ import { usePathname } from "next/navigation";
 import { submitEnquiry } from "@/lib/supabase";
 import { SITE } from "@/lib/site";
 
-const WEEKS = [
+export const WEEKS = [
   "Late May 2027 (first shoals, quietest water)",
   "Early June 2027",
   "Mid June 2027 (peak window)",
