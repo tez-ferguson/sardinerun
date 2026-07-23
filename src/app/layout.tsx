@@ -4,6 +4,7 @@ import "./globals.css";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import WhatsAppFloat from "@/components/WhatsAppFloat";
+import LeadPopup from "@/components/LeadPopup";
 import JsonLd from "@/components/JsonLd";
 import { orgSchema, websiteSchema } from "@/lib/schema";
 import { SITE } from "@/lib/site";
@@ -68,6 +69,7 @@ export default function RootLayout({
         <main>{children}</main>
         <Footer />
         <WhatsAppFloat />
+        <LeadPopup />
       </body>
     </html>
   );
