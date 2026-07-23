@@ -241,8 +241,13 @@ export default function ScrollHero() {
           const after = y > s.end;
           let cop: number;
           if (i === 0) cop = after ? 0 : smooth(1 - pr / 0.55);
-          else if (i === LEGS.length - 1) cop = before ? 0 : smooth(pr / 0.38);
-          else cop = before || after ? 0 : smooth(1 - Math.abs(pr - 0.5) / 0.5);
+          else if (i === LEGS.length - 1) {
+            // Last leg's copy (title/body/CTAs) must fade out once scrolled past —
+            // otherwise it stays pinned at opacity 1 forever (it's `position: fixed`)
+            // and floats on top of everything below, including the footer.
+            const exit = after ? smooth(1 - (y - s.end) / fade) : 1;
+            cop = before ? 0 : smooth(pr / 0.38) * exit;
+          } else cop = before || after ? 0 : smooth(1 - Math.abs(pr - 0.5) / 0.5);
           c.style.opacity = String(cop);
           c.style.transform = `translateY(${(0.5 - pr) * 3.2}vh)`;
           c.style.pointerEvents = cop > 0.5 ? "auto" : "none";
