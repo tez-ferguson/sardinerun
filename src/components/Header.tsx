@@ -70,9 +70,10 @@ export default function Header() {
           </a>
           <Link
             href="/contact"
-            className="rounded-full bg-coral-500 px-4 py-2 text-sm font-semibold text-white shadow-lg shadow-coral-500/25 transition hover:bg-coral-600 lg:px-5"
+            className="whitespace-nowrap rounded-full bg-coral-500 px-3.5 py-2 text-sm font-semibold text-white shadow-lg shadow-coral-500/25 transition hover:bg-coral-600 sm:px-4 lg:px-5"
           >
-            Enquire now
+            <span className="sm:hidden">Enquire</span>
+            <span className="hidden sm:inline">Enquire now</span>
           </Link>
           <button
             onClick={() => setOpen(!open)}

@@ -14,7 +14,12 @@ const GUIDE_LINKS = [
 
 export default function Footer() {
   return (
-    <footer className="border-t border-white/10 bg-abyss-950">
+    // relative + z-index gives the footer its own stacking context so it always
+    // sits above any position:fixed decorative layers earlier in the page (e.g.
+    // the cinematic hero's background stage), even if one is ever added without
+    // pointer-events-none. Unpositioned elements would otherwise still be
+    // click-through-able underneath any positioned sibling regardless of DOM order.
+    <footer className="relative z-30 border-t border-white/10 bg-abyss-950">
       <div className="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8">
         <div className="grid gap-10 md:grid-cols-2 lg:grid-cols-4">
           <div>

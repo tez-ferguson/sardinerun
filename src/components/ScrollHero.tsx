@@ -439,8 +439,12 @@ export default function ScrollHero() {
 
   return (
     <div className="relative">
-      {/* Fixed stage */}
-      <div className="fixed inset-0 z-0" aria-hidden>
+      {/* Fixed stage: purely decorative (poster/video/canvas), never interactive.
+          pointer-events-none is required here, not just on the copy layer below:
+          any position:fixed element (even at z-0) hit-tests above unpositioned
+          content like <footer>, regardless of DOM order or z-index value, so
+          without this the whole footer becomes unclickable on this page. */}
+      <div className="pointer-events-none fixed inset-0 z-0" aria-hidden>
         {LEGS.map((l, i) => (
           <div
             key={i}
@@ -505,7 +509,12 @@ export default function ScrollHero() {
 function HeroCopy({ leg, h1 }: { leg: Leg; h1: boolean }) {
   const Title = h1 ? "h1" : "h2";
   return (
-    <div className="pointer-events-auto max-w-xl">
+    // No pointer-events-auto here: the parent <article> already toggles its own
+    // inline pointer-events (auto/none) based on scroll-driven visibility. Forcing
+    // "auto" here would re-enable clicks on this invisible layer everywhere it sits
+    // on screen, including the footer once scrolled past, silently swallowing clicks
+    // meant for footer links.
+    <div className="max-w-xl">
       <p className="font-display text-xs font-semibold uppercase tracking-[0.22em] text-coral-400 sm:text-sm">{leg.eyebrow}</p>
       <Title className="mt-3 font-display text-4xl font-extrabold leading-[1.02] text-white drop-shadow-[0_2px_24px_rgba(5,23,36,0.8)] sm:text-6xl lg:text-7xl">
         {leg.title}
