@@ -1,0 +1,105 @@
+@import "tailwindcss";
+
+@theme {
+  /* Brand — inherited from Offshore Adventures */
+  --color-coral-50: #fef3ee;
+  --color-coral-100: #fde4d7;
+  --color-coral-200: #fac5ae;
+  --color-coral-300: #f79d7a;
+  --color-coral-400: #f47245;
+  --color-coral-500: #f15a2b; /* Offshore Adventures orange */
+  --color-coral-600: #d64a1f;
+  --color-coral-700: #b23a18;
+  --color-coral-800: #8e2f18;
+  --color-coral-900: #732a17;
+
+  --color-abyss-50: #f0f6fa;
+  --color-abyss-100: #dce9f2;
+  --color-abyss-200: #bdd6e6;
+  --color-abyss-300: #90bad4;
+  --color-abyss-400: #5b97bd;
+  --color-abyss-500: #3d7ba3;
+  --color-abyss-600: #2f6289;
+  --color-abyss-700: #2a5170;
+  --color-abyss-800: #12374e; /* card navy */
+  --color-abyss-900: #0a2233; /* section navy */
+  --color-abyss-950: #051724; /* page deep */
+
+  --color-ocean-300: #7cc4f5;
+  --color-ocean-400: #4fb0f4;
+  --color-ocean-500: #2ea3f2; /* Offshore Adventures blue */
+  --color-ocean-600: #1c85cf;
+
+  --color-sand-50: #fbf8f2;
+  --color-sand-100: #f6f0e4;
+  --color-sand-200: #ece1cb;
+
+  --font-display: var(--font-sora), ui-sans-serif, system-ui, sans-serif;
+  --font-body: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+
+  --animate-fade-up: fade-up 0.7s cubic-bezier(0.16, 1, 0.3, 1) both;
+
+  @keyframes fade-up {
+    from {
+      opacity: 0;
+      transform: translateY(24px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+}
+
+body {
+  font-family: var(--font-body);
+  background: var(--color-abyss-950);
+  color: #eef4f8;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+.font-display {
+  font-family: var(--font-display);
+}
+
+/* Reusable editorial prose on dark */
+.prose-dark p {
+  color: #c3d3dd;
+  line-height: 1.75;
+}
+.prose-dark strong {
+  color: #ffffff;
+}
+.prose-dark a {
+  color: var(--color-ocean-400);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.prose-dark a:hover {
+  color: var(--color-coral-400);
+}
+
+/* Scroll-driven reveal (progressive enhancement; content visible by default) */
+@supports (animation-timeline: view()) {
+  .reveal {
+    animation: fade-up linear both;
+    animation-timeline: view();
+    animation-range: entry 0% entry 42%;
+  }
+}
+
+::selection {
+  background: var(--color-coral-500);
+  color: #fff;
+}
