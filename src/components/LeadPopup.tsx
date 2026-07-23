@@ -6,7 +6,7 @@
  * Trigger conditions (whichever fires first):
  *  - Desktop "exit intent": mouse leaves through the top of the viewport
  *    (the classic "closing the tab / typing a new URL" gesture).
- *  - Deep scroll: reached ~60% down the page — a proxy for "engaged, but
+ *  - Deep scroll: reached ~60% down the page, a proxy for "engaged, but
  *    exit-intent doesn't exist on touch devices".
  *  - Timed fallback: 45s on the page, for anyone who never triggers the
  *    above (short pages, no mouse movement, etc).
@@ -23,7 +23,7 @@ import { WEEKS } from "./EnquiryForm";
 
 const STORAGE_KEY = "sra_lead_popup_seen_at";
 const SNOOZE_MS = 14 * 24 * 60 * 60 * 1000; // 14 days
-const MIN_DWELL_MS = 8000; // ignore triggers before this — avoids firing on a drive-by mouse flick
+const MIN_DWELL_MS = 8000; // ignore triggers before this; avoids firing on a drive-by mouse flick
 const TIMED_FALLBACK_MS = 45000;
 const SCROLL_DEPTH_TRIGGER = 0.6;
 // The contact page already has the full enquiry form front and centre.
@@ -47,7 +47,7 @@ export default function LeadPopup() {
     try {
       lastShown = Number(localStorage.getItem(STORAGE_KEY) ?? 0);
     } catch {
-      // localStorage unavailable (privacy mode etc.) — fall through and allow the popup.
+      // localStorage unavailable (privacy mode etc.); fall through and allow the popup.
     }
     if (lastShown && Date.now() - lastShown < SNOOZE_MS) return;
 
@@ -67,7 +67,7 @@ export default function LeadPopup() {
     }
 
     function onMouseOut(e: MouseEvent) {
-      // Only "leaving through the top edge" — not every mouseout between elements.
+      // Only "leaving through the top edge", not every mouseout between elements.
       if (e.relatedTarget || e.clientY > 0) return;
       trigger();
     }
@@ -154,7 +154,7 @@ export default function LeadPopup() {
                 <path d="M4 12.5l5 5L20 6.5" />
               </svg>
             </div>
-            <h3 className="mt-4 font-display text-xl font-bold text-white">Got it — enquiry received</h3>
+            <h3 className="mt-4 font-display text-xl font-bold text-white">Got it. Enquiry received</h3>
             <p className="mt-2 text-abyss-100">
               We&apos;ll come back to you within one working day with 2027 availability and the launch rate.
             </p>
@@ -164,7 +164,7 @@ export default function LeadPopup() {
             <p className="font-display text-xs font-semibold uppercase tracking-[0.2em] text-coral-400">Before you go</p>
             <h3 className="mt-2 font-display text-2xl font-extrabold text-white">2027 weeks are already filling</h3>
             <p className="mt-3 text-sm leading-6 text-abyss-100">
-              Leave your details and we&apos;ll hold your place in the queue — early enquiries get first pick of peak
+              Leave your details and we&apos;ll hold your place in the queue. Early enquiries get first pick of peak
               weeks and the launch rate.
             </p>
 

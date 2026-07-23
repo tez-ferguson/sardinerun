@@ -1,7 +1,7 @@
 @import "tailwindcss";
 
 @theme {
-  /* Brand — inherited from Offshore Adventures */
+  /* Brand: inherited from Offshore Adventures */
   --color-coral-50: #fef3ee;
   --color-coral-100: #fde4d7;
   --color-coral-200: #fac5ae;

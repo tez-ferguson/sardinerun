@@ -1,7 +1,7 @@
 "use client";
 
 /**
- * Scroll-scrubbed cinematic hero — three chained legs rendered as one continuous
+ * Scroll-scrubbed cinematic hero: three chained legs rendered as one continuous
  * camera flight (surface → under the surface → the great shoal → the hunt).
  *
  * Technique (adapted from the scroll-world scrub engine):
@@ -27,7 +27,7 @@ type Leg = {
   posterMobile?: string;
   /** viewport-heights of scroll this leg occupies */
   scroll: number;
-  /** 0..1 — settle the camera mid-scene while copy peaks */
+  /** 0..1: settle the camera mid-scene while copy peaks */
   linger: number;
   eyebrow: string;
   title: string;
@@ -44,9 +44,9 @@ const LEGS: Leg[] = [
     posterMobile: "/video/poster-1-m.webp",
     scroll: 1.7,
     linger: 0.35,
-    eyebrow: "Chintsa · Wild Coast · May – July",
+    eyebrow: "Chintsa · Wild Coast · May to July",
     title: "The Greatest Shoal on Earth",
-    body: "Each winter, billions of sardines pour up South Africa's Wild Coast — and the ocean's fastest hunters follow. This is the world's biggest marine migration, and it passes our beach first.",
+    body: "Each winter, billions of sardines pour up South Africa's Wild Coast, and the ocean's fastest hunters follow. This is the world's biggest marine migration, and it passes our beach first.",
     tags: ["7-day expeditions", "40 min from the airport", "Small groups"],
   },
   {
@@ -58,7 +58,7 @@ const LEGS: Leg[] = [
     linger: 0.4,
     eyebrow: "Beneath the surface",
     title: "Then the water turns silver",
-    body: "Shoals up to seven kilometres long move like one animal — a flashing wall of fish you can see from the air. Down here, you're inside it.",
+    body: "Shoals up to seven kilometres long move like one animal: a flashing wall of fish you can see from the air. Down here, you're inside it.",
     tags: ["Snorkel-first", "No dive cert needed"],
   },
   {
@@ -241,13 +241,8 @@ export default function ScrollHero() {
           const after = y > s.end;
           let cop: number;
           if (i === 0) cop = after ? 0 : smooth(1 - pr / 0.55);
-          else if (i === LEGS.length - 1) {
-            // Last leg's copy (title/body/CTAs) must fade out once scrolled past —
-            // otherwise it stays pinned at opacity 1 forever (it's `position: fixed`)
-            // and floats on top of everything below, including the footer.
-            const exit = after ? smooth(1 - (y - s.end) / fade) : 1;
-            cop = before ? 0 : smooth(pr / 0.38) * exit;
-          } else cop = before || after ? 0 : smooth(1 - Math.abs(pr - 0.5) / 0.5);
+          else if (i === LEGS.length - 1) cop = before ? 0 : smooth(pr / 0.38);
+          else cop = before || after ? 0 : smooth(1 - Math.abs(pr - 0.5) / 0.5);
           c.style.opacity = String(cop);
           c.style.transform = `translateY(${(0.5 - pr) * 3.2}vh)`;
           c.style.pointerEvents = cop > 0.5 ? "auto" : "none";

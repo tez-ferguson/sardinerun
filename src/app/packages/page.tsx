@@ -11,14 +11,14 @@ import { SITE } from "@/lib/site";
 export const metadata: Metadata = {
   title: "7-Day Sardine Run Expedition Packages 2027 | Chintsa, East London",
   description:
-    "The 2027 sardine run expedition: 7 days, 5 sea days from Chintsa. Lodge, meals, airport transfers and small-group boats included. Snorkelers welcome — enquire for the launch rate.",
+    "The 2027 sardine run expedition: 7 days, 5 sea days from Chintsa. Lodge, meals, airport transfers and small-group boats included. Snorkelers welcome. Enquire for the launch rate.",
   alternates: { canonical: "/packages" },
 };
 
 const ITINERARY = [
   { day: "Day 1", title: "Arrive Chintsa", body: "Land at King Phalo Airport (direct from Johannesburg or Cape Town), 40-minute transfer to the lodge. Kit fitting, safety briefing, sunset on the beach and the plan for first light." },
   { day: "Day 2", title: "Sea day one", body: "Beach launch at dawn. We learn the water together: reading gannet lines, working with the spotters, first drops on dolphins and whatever the ocean opens with." },
-  { day: "Day 3", title: "Sea day two", body: "Full day on the run. The pattern from day one sharpens — where the bait is holding, where the birds are stacking, where tomorrow starts." },
+  { day: "Day 3", title: "Sea day two", body: "Full day on the run. The pattern from day one sharpens: where the bait is holding, where the birds are stacking, where tomorrow starts." },
   { day: "Day 4", title: "Sea day three", body: "Mid-expedition. By now the crew knows your comfort in the water and pushes the encounters as far as conditions allow." },
   { day: "Day 5", title: "Sea day four", body: "The odds compound: more hours on the water is the only honest strategy on a wild migration, and this is where multi-day guests get paid." },
   { day: "Day 6", title: "Sea day five", body: "Last launch. If the week has been generous, we chase the best of it one more time. If the ocean owes us, this is traditionally the day it settles up." },
@@ -38,7 +38,7 @@ const INCLUDED = [
 
 const EXCLUDED = [
   "Flights to East London (direct from JNB/CPT daily)",
-  "Dive and travel insurance (DAN or equivalent — required)",
+  "Dive and travel insurance (DAN or equivalent, required)",
   "Alcoholic drinks and personal extras",
   "Gratuities for the crew",
   "Single-room supplement (limited rooms, on request)",
@@ -47,11 +47,11 @@ const EXCLUDED = [
 const PKG_FAQS = [
   {
     q: "What will the 2027 expedition cost?",
-    a: "Final 2027 pricing is being confirmed. For honest context, comparable 7-day Wild Coast packages sold for R38,000-R53,000 per person sharing (about $2,100-$3,300) in 2026 — see our [full price breakdown](/guides/sardine-run-cost). Enquire now and you'll get the launch rate before public release.",
+    a: "Final 2027 pricing is being confirmed. For honest context, comparable 7-day Wild Coast packages sold for R38,000-R53,000 per person sharing (about $2,100-$3,300) in 2026. See our [full price breakdown](/guides/sardine-run-cost). Enquire now and you'll get the launch rate before public release.",
   },
   {
     q: "How do deposits and payments work?",
-    a: "A deposit secures your week, with the balance due 60 days before arrival — industry-standard for the run. We'll confirm exact terms with your quote, in ZAR or USD.",
+    a: "A deposit secures your week, with the balance due 60 days before arrival, which is industry-standard for the run. We'll confirm exact terms with your quote, in ZAR or USD.",
   },
   {
     q: "What happens if the weather blows a sea day out?",
@@ -59,15 +59,15 @@ const PKG_FAQS = [
   },
   {
     q: "Can my non-diving partner come?",
-    a: "Yes. The boat is a front-row seat — whales, super-pods and gannet rain are surface events. Partners can join sea days as boat-based guests or enjoy Chintsa on land; ask for partner rates in your enquiry.",
+    a: "Yes. The boat is a front-row seat: whales, super-pods and gannet rain are surface events. Partners can join sea days as boat-based guests or enjoy Chintsa on land; ask for partner rates in your enquiry.",
   },
   {
     q: "How many guests per boat?",
-    a: "Small groups only. The run rewards fast, uncrowded boats — it's the difference between watching a bait ball and being in it. Exact boat numbers confirmed with your quote.",
+    a: "Small groups only. The run rewards fast, uncrowded boats. It's the difference between watching a bait ball and being in it. Exact boat numbers confirmed with your quote.",
   },
   {
     q: "Do I need scuba certification?",
-    a: "No — most encounters are snorkel and freedive at the surface, where the action is. Certified divers (Open Water with experience, or Advanced) can drop on stable bait balls when the skipper calls it. Read [the run without scuba](/guides/sardine-run-without-scuba).",
+    a: "No. Most encounters are snorkel and freedive at the surface, where the action is. Certified divers (Open Water with experience, or Advanced) can drop on stable bait balls when the skipper calls it. Read [the run without scuba](/guides/sardine-run-without-scuba).",
   },
 ];
 
@@ -82,13 +82,13 @@ export default function PackagesPage() {
         <div className="absolute inset-0 bg-gradient-to-t from-abyss-950 via-abyss-950/40 to-abyss-950/30" />
         <div className="relative mx-auto w-full max-w-7xl px-4 pb-14 sm:px-6 lg:px-8">
           <Breadcrumbs crumbs={[{ name: "Home", href: "/" }, { name: "The Expedition", href: "/packages" }]} />
-          <p className="mt-6 font-display text-sm font-semibold uppercase tracking-[0.2em] text-coral-400">The 2027 Expedition · May – July</p>
+          <p className="mt-6 font-display text-sm font-semibold uppercase tracking-[0.2em] text-coral-400">The 2027 Expedition · May to July</p>
           <h1 className="mt-3 max-w-3xl font-display text-4xl font-extrabold leading-[1.05] text-white sm:text-6xl">
             Seven days. Five launches. The greatest shoal on Earth.
           </h1>
           <p className="mt-5 max-w-2xl text-lg leading-8 text-abyss-50">
             A full week structured around one goal: maximum hours on the water while the run passes our coast first.
-            Lodge, meals, transfers and crew included — you bring a wetsuit-sized appetite for the wild.
+            Lodge, meals, transfers and crew included. You bring a wetsuit-sized appetite for the wild.
           </p>
           <div className="mt-8 flex flex-col gap-3 sm:flex-row">
             <Link href="/contact" className="rounded-full bg-coral-500 px-8 py-4 text-center font-display font-semibold text-white shadow-xl shadow-coral-500/30 transition hover:bg-coral-600">
@@ -107,7 +107,7 @@ export default function PackagesPage() {
           {[
             ["7 days", "6 nights"],
             ["5", "sea days"],
-            ["May–Jul", "2027 season"],
+            ["May-Jul", "2027 season"],
             ["ELS", "40 min from airport"],
             ["ZAR/USD", "dual pricing"],
           ].map(([a, b]) => (
@@ -125,7 +125,7 @@ export default function PackagesPage() {
           <p className="font-display text-sm font-semibold uppercase tracking-[0.2em] text-coral-400">Day by day</p>
           <h2 className="mt-3 font-display text-3xl font-extrabold text-white sm:text-4xl">Built around the water, not the brochure</h2>
           <p className="mt-4 text-lg leading-8 text-abyss-100">
-            The run doesn&apos;t keep office hours. The week flexes with the forecast — this is the shape of it.
+            The run doesn&apos;t keep office hours. The week flexes with the forecast. This is the shape of it.
           </p>
         </div>
         <div className="mt-12 grid gap-4 lg:grid-cols-2">
@@ -169,7 +169,7 @@ export default function PackagesPage() {
               <p className="font-display font-semibold text-white">Honesty clause</p>
               <p className="mt-2 text-sm leading-6 text-abyss-100">
                 Nobody can guarantee bait balls, and anyone who does is selling you weather. What we sell is time on the
-                water, in the right place, earlier than the fleet — with a crew that has run these coasts for years.
+                water, in the right place, earlier than the fleet, with a crew that has run these coasts for years.
               </p>
             </div>
           </div>
@@ -179,10 +179,10 @@ export default function PackagesPage() {
       {/* Pricing */}
       <section className="mx-auto max-w-5xl px-4 py-20 text-center sm:px-6">
         <p className="font-display text-sm font-semibold uppercase tracking-[0.2em] text-coral-400">2027 pricing</p>
-        <h2 className="mt-3 font-display text-3xl font-extrabold text-white sm:text-4xl">Launch rate — first enquiries, first served</h2>
+        <h2 className="mt-3 font-display text-3xl font-extrabold text-white sm:text-4xl">Launch rate: first enquiries, first served</h2>
         <p className="mx-auto mt-5 max-w-2xl text-lg leading-8 text-abyss-100">
           We&apos;re finalising 2027 rates now. Comparable Wild Coast expeditions sold between{" "}
-          <strong className="text-white">R38,000 and R53,000</strong> per person sharing in 2026 — our package will be
+          <strong className="text-white">R38,000 and R53,000</strong> per person sharing in 2026. Our package will be
           priced to be the obvious value in that bracket, in ZAR or USD. Early enquiries lock the launch rate before
           public release and get first pick of peak weeks.
         </p>

@@ -36,7 +36,7 @@ export default function Header() {
       }`}
     >
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between gap-4 px-4 sm:px-6 lg:h-20 lg:px-8">
-        <Link href="/" aria-label="Sardine Run Africa — home" className="text-white">
+        <Link href="/" aria-label="Sardine Run Africa - home" className="text-white">
           <Logo className="h-8 w-auto lg:h-10" />
         </Link>
 

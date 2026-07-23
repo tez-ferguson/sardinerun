@@ -11,14 +11,14 @@ import { SITE } from "@/lib/site";
 export const metadata: Metadata = {
   title: "Sardine Run South Africa 2027 | Expeditions from Chintsa, East London",
   description:
-    "Join the sardine run — the greatest shoal on Earth. 7-day expeditions from Chintsa, East London: first to the shoals, 40 minutes from the airport, snorkelers welcome. Enquire for 2027.",
+    "Join the sardine run, the greatest shoal on Earth. 7-day expeditions from Chintsa, East London: first to the shoals, 40 minutes from the airport, snorkelers welcome. Enquire for 2027.",
   alternates: { canonical: "/" },
 };
 
 const HOME_FAQS = [
   {
     q: "When is the sardine run?",
-    a: "May to July each year. The action starts in the south — the Gqeberha to East London stretch, our home water — in May and June, then moves north to Port St Johns through July. See our [season and dates guide](/guides/sardine-run-season-dates) for the month-by-month picture.",
+    a: "May to July each year. The action starts in the south, on the Gqeberha to East London stretch (our home water), in May and June, then moves north to Port St Johns through July. See our [season and dates guide](/guides/sardine-run-season-dates) for the month-by-month picture.",
   },
   {
     q: "Do I need to be a scuba diver?",
@@ -30,22 +30,22 @@ const HOME_FAQS = [
   },
   {
     q: "Are sightings guaranteed?",
-    a: "No honest operator guarantees bait balls — this is a wild migration driven by water temperature and wind. What we can say: dolphins, whales and gannets are seen on most sea days in season, and five sea days gives the run every chance to deliver.",
+    a: "No honest operator guarantees bait balls. This is a wild migration driven by water temperature and wind. What we can say: dolphins, whales and gannets are seen on most sea days in season, and five sea days gives the run every chance to deliver.",
   },
   {
     q: "How much does it cost?",
-    a: "2027 pricing is being finalised — comparable 7-day Wild Coast expeditions run roughly R38,000 to R53,000 per person sharing. [Enquire now](/contact) for the launch rate; early enquiries get first pick of peak weeks. Full market breakdown in our [price guide](/guides/sardine-run-cost).",
+    a: "2027 pricing is being finalised. Comparable 7-day Wild Coast expeditions run roughly R38,000 to R53,000 per person sharing. [Enquire now](/contact) for the launch rate; early enquiries get first pick of peak weeks. Full market breakdown in our [price guide](/guides/sardine-run-cost).",
   },
   {
     q: "How fit do I need to be?",
-    a: "Moderately: 6 to 8 hours a day on a RIB, quick entries and exits, and the strength to climb back aboard. If you can swim confidently in open water, you can do this — our [preparation guide](/guides/sardine-run-fitness-preparation) has an 8-week plan.",
+    a: "Moderately: 6 to 8 hours a day on a RIB, quick entries and exits, and the strength to climb back aboard. If you can swim confidently in open water, you can do this. Our [preparation guide](/guides/sardine-run-fitness-preparation) has an 8-week plan.",
   },
 ];
 
 const SPECIES = [
-  { img: "/images/dolphins-hunt.webp", name: "Common dolphins", note: "Super-pods thousands strong — the bait-ball architects", likelihood: "Most sea days" },
+  { img: "/images/dolphins-hunt.webp", name: "Common dolphins", note: "Super-pods thousands strong, the bait-ball architects", likelihood: "Most sea days" },
   { img: "/images/gannets-dive.webp", name: "Cape gannets", note: "Hit the water from 30 metres like white arrows", likelihood: "Most sea days" },
-  { img: "/images/brydes-whale.webp", name: "Bryde's whales", note: "The bait-ball freight train — mouth first", likelihood: "Regular" },
+  { img: "/images/brydes-whale.webp", name: "Bryde's whales", note: "The bait-ball freight train, mouth first", likelihood: "Regular" },
   { img: "/images/humpback-breach.webp", name: "Humpback whales", note: "Migrating north alongside the run", likelihood: "Almost daily" },
   { img: "/images/copper-shark.webp", name: "Copper sharks", note: "The signature shark of the run", likelihood: "Regular" },
   { img: "/images/cape-fur-seal.webp", name: "Cape fur seals", note: "Fast, curious, everywhere the fish are", likelihood: "Regular" },
@@ -55,7 +55,7 @@ const DAY_TIMELINE = [
   { time: "05:45", what: "Coffee on the deck, kit check, sea briefing" },
   { time: "06:30", what: "Beach launch into first light" },
   { time: "07:00", what: "Reading the signs: gannet lines, dolphin runs, whale blows" },
-  { time: "09:00", what: "On the fish — snorkel entries when the ball sets up" },
+  { time: "09:00", what: "On the fish: snorkel entries when the ball sets up" },
   { time: "13:00", what: "Lunch on the water, following the action" },
   { time: "15:00", what: "Last drops, then home through the swell" },
   { time: "18:30", what: "Fire, food, and the day's footage" },
@@ -93,13 +93,13 @@ export default function Home() {
             <div>
               <p className="font-display text-sm font-semibold uppercase tracking-[0.2em] text-coral-400">Why Chintsa</p>
               <h2 className="mt-3 font-display text-3xl font-extrabold leading-tight text-white sm:text-4xl">
-                See the run first — before the fleet follows it north
+                See the run first, before the fleet follows it north
               </h2>
               <div className="prose-dark mt-6 space-y-4">
                 <p>
                   Every winter the sardines move up the coast from the Agulhas Bank, and the southern Wild Coast gets them
-                  first. While the boats crowd Port St Johns waiting for mid-season, the early shoals — and the dolphins,
-                  gannets and whales working them — are already off our beach.
+                  first. While the boats crowd Port St Johns waiting for mid-season, the early shoals are already off
+                  our beach, with the dolphins, gannets and whales working them.
                 </p>
                 <p>
                   Chintsa is the easiest sardine run base in the country to reach: fly direct from Johannesburg or Cape Town
@@ -111,7 +111,7 @@ export default function Home() {
                   <a href={SITE.sisterCompany.url} target="_blank" rel="noopener noreferrer">
                     Offshore Adventures
                   </a>{" "}
-                  in Plettenberg Bay — thousands of ocean safaris, seal swims and sardine run charters over the years,
+                  in Plettenberg Bay: thousands of ocean safaris, seal swims and sardine run charters over the years,
                   with Blue Flag status and an NSRI partnership to show for it.
                 </p>
               </div>
@@ -136,7 +136,7 @@ export default function Home() {
               </div>
               <div className="absolute -bottom-6 -left-6 hidden rounded-2xl border border-white/10 bg-abyss-900 p-5 shadow-2xl sm:block">
                 <p className="font-display text-sm font-semibold text-white">Chintsa, Eastern Cape</p>
-                <p className="mt-1 text-xs text-abyss-200">32.84°S — where the Wild Coast begins</p>
+                <p className="mt-1 text-xs text-abyss-200">32.84°S, where the Wild Coast begins</p>
               </div>
             </div>
           </div>
@@ -255,7 +255,7 @@ export default function Home() {
         </section>
 
         <CtaBand
-          heading="2027 weeks open soon — get in first"
+          heading="2027 weeks open soon. Get in first"
           body="Tell us your preferred window and group size. Early enquiries get first pick of the peak weeks and the launch rate when pricing is confirmed."
         />
       </div>

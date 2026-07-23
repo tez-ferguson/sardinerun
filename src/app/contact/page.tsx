@@ -6,7 +6,7 @@ import { SITE } from "@/lib/site";
 export const metadata: Metadata = {
   title: "Enquire About the 2027 Sardine Run | Bookings & Contact",
   description:
-    "Request 2027 sardine run availability from Chintsa, East London. Tell us your week and group size — we reply within one working day. WhatsApp and phone welcome.",
+    "Request 2027 sardine run availability from Chintsa, East London. Tell us your week and group size, and we reply within one working day. WhatsApp and phone welcome.",
   alternates: { canonical: "/contact" },
 };
 
@@ -60,7 +60,7 @@ export default function ContactPage() {
             <div className="rounded-3xl border border-ocean-500/25 bg-ocean-500/[0.06] p-7">
               <h2 className="font-display text-lg font-bold text-white">Good to know</h2>
               <ul className="mt-4 space-y-3 text-sm leading-6 text-abyss-100">
-                <li>Boats carry small groups — peak weeks (mid to late June) go first.</li>
+                <li>Boats carry small groups. Peak weeks (mid to late June) go first.</li>
                 <li>No payment at enquiry. A deposit only locks your week once you confirm.</li>
                 <li>International guests: we quote in USD too, and help with flight timing into ELS.</li>
               </ul>

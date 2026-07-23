@@ -22,7 +22,7 @@ export default function Footer() {
               <Logo className="h-10 w-auto" />
             </div>
             <p className="mt-4 max-w-xs text-sm leading-6 text-abyss-200">
-              Seven-day sardine run expeditions from Chintsa, East London — by the team behind{" "}
+              Seven-day sardine run expeditions from Chintsa, East London, by the team behind{" "}
               <a
                 href={SITE.sisterCompany.url}
                 target="_blank"
@@ -95,7 +95,7 @@ export default function Footer() {
 
         <div className="mt-12 flex flex-col items-start justify-between gap-4 border-t border-white/10 pt-8 text-xs text-abyss-300 sm:flex-row sm:items-center">
           <p>
-            © {new Date().getFullYear()} {SITE.name}. Season runs {SITE.season}. Sea days are weather-dependent — that&apos;s the Wild Coast.
+            © {new Date().getFullYear()} {SITE.name}. Season runs {SITE.season}. Sea days are weather-dependent. That&apos;s the Wild Coast.
           </p>
           <div className="flex gap-5">
             <a href={SITE.social.instagram} target="_blank" rel="noopener noreferrer" className="hover:text-white">

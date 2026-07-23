@@ -37,7 +37,7 @@ export default function CtaBand({
             WhatsApp the skipper&apos;s desk
           </a>
         </div>
-        <p className="mt-5 text-sm text-white/75">Boats carry small groups only — prime weeks go 6–12 months out.</p>
+        <p className="mt-5 text-sm text-white/75">Boats carry small groups only, and prime weeks go 6-12 months out.</p>
       </div>
     </section>
   );

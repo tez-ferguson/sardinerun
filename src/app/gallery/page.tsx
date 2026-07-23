@@ -21,7 +21,7 @@ const SHOTS: { src: string; alt: string; caption: string; wide?: boolean }[] = [
   { src: "/images/dolphins-surface.webp", alt: "Superpod of dolphins at the surface at dawn", caption: "The morning commute, Wild Coast style", wide: true },
   { src: "/images/humpback-breach.webp", alt: "Humpback whale breaching off the Wild Coast", caption: "Humpbacks pass through daily in season" },
   { src: "/images/orca.webp", alt: "Pair of orcas surfacing offshore", caption: "Some days the apex shows up too" },
-  { src: "/images/spotter-view.webp", alt: "Sardine shoal seen from the spotter plane", caption: "The shoal from above — the spotter's view" },
+  { src: "/images/spotter-view.webp", alt: "Sardine shoal seen from the spotter plane", caption: "The shoal from above, the spotter's view" },
   { src: "/images/rib-launch.webp", alt: "Expedition RIB launching at dawn", caption: "06:30, Chintsa beach. Office hours" },
   { src: "/images/photographer-uw.webp", alt: "Freediver photographing a distant bait ball", caption: "Working the ball on one breath" },
   { src: "/images/wild-coast-aerial.webp", alt: "Aerial view of the Wild Coast cliffs", caption: "The commute home", wide: true },
@@ -39,7 +39,7 @@ export default function GalleryPage() {
             <p className="font-display text-sm font-semibold uppercase tracking-[0.2em] text-coral-400">From our side of the mask</p>
             <h1 className="mt-3 font-display text-4xl font-extrabold text-white sm:text-5xl">The run, as you&apos;ll see it</h1>
             <p className="mt-5 text-lg leading-8 text-abyss-100">
-              No stock clichés, no aquarium shots. This is the world the expedition takes you into — and the homepage
+              No stock clichés, no aquarium shots. This is the world the expedition takes you into, and the homepage
               film shows it in motion.
             </p>
           </div>
@@ -56,7 +56,7 @@ export default function GalleryPage() {
           </div>
         </div>
       </div>
-      <CtaBand heading="Want these in your own camera roll?" body="Five sea days in peak season. Bring the housing — we'll find the fish." />
+      <CtaBand heading="Want these in your own camera roll?" body="Five sea days in peak season. Bring the housing. We'll find the fish." />
     </>
   );
 }

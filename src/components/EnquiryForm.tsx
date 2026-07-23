@@ -5,13 +5,13 @@ import { usePathname } from "next/navigation";
 import { submitEnquiry } from "@/lib/supabase";
 import { SITE } from "@/lib/site";
 
-export const WEEKS = [
+const WEEKS = [
   "Late May 2027 (first shoals, quietest water)",
   "Early June 2027",
   "Mid June 2027 (peak window)",
   "Late June 2027 (peak window)",
   "Early July 2027",
-  "Flexible — advise me",
+  "Flexible / advise me",
 ];
 
 const EXPERIENCE = [
@@ -204,7 +204,7 @@ export default function EnquiryForm({ compact = false }: { compact?: boolean }) 
         {state === "sending" ? "Sending…" : "Request 2027 availability"}
       </button>
       <p className="text-xs text-abyss-300">
-        No payment now. We reply within one working day — usually much faster in season.
+        No payment now. We reply within one working day, usually much faster in season.
       </p>
     </form>
   );

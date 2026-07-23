@@ -8,7 +8,7 @@ import { SITE } from "@/lib/site";
 export const metadata: Metadata = {
   title: "About Us: The Crew Behind Sardine Run Africa",
   description:
-    "Sardine Run Africa is the Wild Coast expedition arm of Offshore Adventures, Plettenberg Bay — Blue Flag operators, NSRI partners, and thousands of ocean safaris deep. Meet the crew.",
+    "Sardine Run Africa is the Wild Coast expedition arm of Offshore Adventures, Plettenberg Bay: Blue Flag operators, NSRI partners, and thousands of ocean safaris deep. Meet the crew.",
   alternates: { canonical: "/about" },
 };
 
@@ -51,7 +51,7 @@ export default function AboutPage() {
             </a>
             , the Plettenberg Bay operation known for its seal swims, ocean safaris and marine research work. For years we
             ran seasonal sardine run charters alongside the Plett business; guests kept telling us the same thing on the way
-            home — <strong>this deserves its own operation, closer to the early fish.</strong>
+            home: <strong>this deserves its own operation, closer to the early fish.</strong>
           </p>
           <p>
             So we built one. Chintsa gives us what Plett taught us to value: a protected beach launch, honest access to the

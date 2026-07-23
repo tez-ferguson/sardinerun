@@ -9,14 +9,14 @@ import { faqSchema } from "@/lib/schema";
 export const metadata: Metadata = {
   title: "Sardine Run Tracker: Where Are the Sardines Right Now?",
   description:
-    "Live sardine run tracking: where the shoals are, current sea conditions and the latest sightings along the Wild Coast — updated through the May-July season from our boats and network.",
+    "Live sardine run tracking: where the shoals are, current sea conditions and the latest sightings along the Wild Coast, updated through the May-July season from our boats and network.",
   alternates: { canonical: "/sardine-run-tracker" },
 };
 
 const TRACKER_FAQS = [
   {
     q: "Where is the sardine run currently?",
-    a: "The 2026 season has wrapped up — the main body of fish passed through the Wild Coast in June and July, and the late remnants have dispersed north and offshore. This tracker goes live again as the first 2027 shoals appear off the Eastern Cape, typically in May.",
+    a: "The 2026 season has wrapped up. The main body of fish passed through the Wild Coast in June and July, and the late remnants have dispersed north and offshore. This tracker goes live again as the first 2027 shoals appear off the Eastern Cape, typically in May.",
   },
   {
     q: "How do you know where the sardines are?",
@@ -28,16 +28,16 @@ const TRACKER_FAQS = [
   },
   {
     q: "Can the run be predicted in advance?",
-    a: "Broad shape, yes; daily precision, no. The run needs inshore water below about 21°C, so cold-water pulses and wind direction move the fish day to day. That's why expeditions run five sea days — you fish the week, not the hour.",
+    a: "Broad shape, yes; daily precision, no. The run needs inshore water below about 21°C, so cold-water pulses and wind direction move the fish day to day. That's why expeditions run five sea days: you fish the week, not the hour.",
   },
 ];
 
 const PHASES = [
-  { phase: "March – April", state: "Pre-season", note: "Watching Agulhas Bank temperatures and early bait reports from Gqeberha. Outlook posts begin." },
+  { phase: "March to April", state: "Pre-season", note: "Watching Agulhas Bank temperatures and early bait reports from Gqeberha. Outlook posts begin." },
   { phase: "May", state: "Early season", note: "First pockets typically show off the southern Eastern Cape. Our water. Early expeditions launch." },
   { phase: "June", state: "Peak", note: "The main body moves through East London and Chintsa toward the Kei and beyond. Daily reports." },
   { phase: "July", state: "Late season", note: "Action concentrates north around Port St Johns and Mbotyi, tapering late in the month." },
-  { phase: "August – February", state: "Off season", note: "The ocean rests. We publish the season report and open the next year's weeks." },
+  { phase: "August to February", state: "Off season", note: "The ocean rests. We publish the season report and open the next year's weeks." },
 ];
 
 export default function TrackerPage() {
@@ -74,7 +74,7 @@ export default function TrackerPage() {
             <Link href="/guides/sardine-run-2026-season-report" className="text-ocean-400 underline underline-offset-4">
               2026 season report
             </Link>{" "}
-            breaks down how the year unfolded. This tracker goes live again for 2027 as the first cold-water pulses arrive —
+            breaks down how the year unfolded. This tracker goes live again for 2027 as the first cold-water pulses arrive,
             typically May.
           </p>
           <div className="mt-6 flex flex-wrap gap-3">
@@ -104,7 +104,7 @@ export default function TrackerPage() {
         <div className="mt-12 rounded-2xl border border-white/10 bg-abyss-900/50 p-8 text-center">
           <h2 className="font-display text-xl font-bold text-white">Get the 2027 reports first</h2>
           <p className="mx-auto mt-2 max-w-xl text-abyss-100">
-            Enquire for 2027 and we&apos;ll keep you on the pre-season list — temperature outlooks from March, first-shoal
+            Enquire for 2027 and we&apos;ll keep you on the pre-season list: temperature outlooks from March, first-shoal
             alerts in May.
           </p>
           <Link href="/contact" className="mt-5 inline-block rounded-full bg-coral-500 px-7 py-3.5 font-display font-semibold text-white transition hover:bg-coral-600">

@@ -8,7 +8,7 @@ import Breadcrumbs from "@/components/Breadcrumbs";
 export const metadata: Metadata = {
   title: "Sardine Run Guides: Everything About the Greatest Shoal on Earth",
   description:
-    "The most complete sardine run knowledge hub online — season dates, locations, marine life, packing lists, water conditions, photography and honest planning advice from the crew.",
+    "The most complete sardine run knowledge hub online: season dates, locations, marine life, packing lists, water conditions, photography and honest planning advice from the crew.",
   alternates: { canonical: "/guides" },
 };
 
@@ -31,7 +31,7 @@ const GROUPS: { title: string; blurb: string; slugs: string[] }[] = [
   },
   {
     title: "Get ready for the water",
-    blurb: "Kit, conditions, fitness and skills — arrive prepared, leave with the story.",
+    blurb: "Kit, conditions, fitness and skills. Arrive prepared, leave with the story.",
     slugs: ["sardine-run-packing-list", "sardine-run-water-conditions", "sardine-run-fitness-preparation", "sardine-run-without-scuba", "sardine-run-photography"],
   },
   {

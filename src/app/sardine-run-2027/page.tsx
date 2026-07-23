@@ -10,7 +10,7 @@ import { faqSchema, tripSchema } from "@/lib/schema";
 export const metadata: Metadata = {
   title: "Sardine Run 2027: Dates, Availability & Early Booking",
   description:
-    "Sardine run 2027 dates and booking: the season runs May-July, with early action off East London and Chintsa from late May. Weekly 7-day departures — early enquiries get the launch rate.",
+    "Sardine run 2027 dates and booking: the season runs May-July, with early action off East London and Chintsa from late May. Weekly 7-day departures. Early enquiries get the launch rate.",
   alternates: { canonical: "/sardine-run-2027" },
 };
 
@@ -33,7 +33,7 @@ const FAQS_2027 = [
   },
   {
     q: "Is 2027 expected to be a good run?",
-    a: "Nobody can promise a wild migration a year out — the run depends on winter water temperatures staying below about 21°C inshore. What you can control is the odds: five sea days, an early-season base the shoals reach first, and a crew that moves with the forecast.",
+    a: "Nobody can promise a wild migration a year out. The run depends on winter water temperatures staying below about 21°C inshore. What you can control is the odds: five sea days, an early-season base the shoals reach first, and a crew that moves with the forecast.",
   },
   {
     q: "Can I hold a week without paying?",
@@ -59,7 +59,7 @@ export default function SardineRun2027() {
             Sardine Run 2027: dates &amp; early booking
           </h1>
           <p className="mt-5 max-w-2xl text-lg leading-8 text-abyss-50">
-            May to July 2027. Weekly 7-day expeditions from Chintsa — where the shoals arrive before the fleet does.
+            May to July 2027. Weekly 7-day expeditions from Chintsa, where the shoals arrive before the fleet does.
             Boats are small and the best weeks go early; this page is updated as availability moves.
           </p>
         </div>
@@ -68,7 +68,7 @@ export default function SardineRun2027() {
       <section className="mx-auto max-w-5xl px-4 py-16 sm:px-6">
         <h2 className="font-display text-3xl font-extrabold text-white">The 2027 windows</h2>
         <p className="mt-3 max-w-2xl text-abyss-100">
-          Every week is a 7-day package with 5 sea days. Here&apos;s how the season typically unfolds on our stretch of coast — and
+          Every week is a 7-day package with 5 sea days. Here&apos;s how the season typically unfolds on our stretch of coast, and
           where each window stands.
         </p>
         <div className="mt-8 overflow-hidden rounded-2xl border border-white/10">
@@ -88,7 +88,7 @@ export default function SardineRun2027() {
           ))}
         </div>
         <p className="mt-4 text-sm text-abyss-300">
-          Timing context comes from decades of run records — see the{" "}
+          Timing context comes from decades of run records. See the{" "}
           <Link href="/guides/sardine-run-season-dates" className="text-ocean-400 underline underline-offset-4">
             full season guide
           </Link>{" "}
@@ -105,7 +105,7 @@ export default function SardineRun2027() {
         </div>
       </section>
 
-      <CtaBand heading="Lock a 2027 week before pricing goes public" body="Early enquiries get the launch rate and first pick of mid-June. No payment now — just your window and group size." />
+      <CtaBand heading="Lock a 2027 week before pricing goes public" body="Early enquiries get the launch rate and first pick of mid-June. No payment now, just your window and group size." />
     </>
   );
 }
