@@ -158,6 +158,24 @@ export default function ScrollHero() {
     let disposed = false;
     const objectUrls: string[] = [];
 
+    function layoutCopyOffset() {
+      // Mirrors the `lg:` breakpoint (1024px) that switches copy from
+      // bottom-anchored (phones/tablets) to vertically centred (desktop).
+      const desktopLayout = window.innerWidth >= 1024;
+      copyRefs.current.forEach((el) => {
+        if (!el) return;
+        if (desktopLayout) {
+          el.style.bottom = ""; // let the lg:top-1/2 utility classes take over
+          return;
+        }
+        // Computed in JS (not CSS `dvh`) so a browser that mishandles dvh
+        // inside clamp() can't silently drop the whole `bottom` declaration
+        // and strand the copy at the top of the screen, under the header.
+        const px = Math.min(110, Math.max(56, vh * 0.12));
+        el.style.bottom = `calc(${px}px + env(safe-area-inset-bottom))`;
+      });
+    }
+
     function layout() {
       vh = window.innerHeight;
       laidOutW = window.innerWidth;
@@ -169,6 +187,7 @@ export default function ScrollHero() {
       });
       if (trackRef.current) trackRef.current.style.height = `${off * 100}vh`;
       if (mobile) states.forEach((s, i) => sizeCanvas(i));
+      layoutCopyOffset();
       read();
     }
 
@@ -449,7 +468,7 @@ export default function ScrollHero() {
             ref={(el) => {
               copyRefs.current[i] = el;
             }}
-            className="absolute inset-x-0 bottom-[calc(clamp(56px,12dvh,110px)+env(safe-area-inset-bottom))] mx-auto max-w-7xl px-4 opacity-0 will-change-[opacity,transform] sm:px-6 lg:bottom-auto lg:top-1/2 lg:-translate-y-1/2 lg:px-8"
+            className="absolute inset-x-0 bottom-[calc(76px+env(safe-area-inset-bottom))] mx-auto max-w-7xl px-4 opacity-0 will-change-[opacity,transform] sm:px-6 lg:bottom-auto lg:top-1/2 lg:-translate-y-1/2 lg:px-8"
           >
             <HeroCopy leg={l} h1={i === 0} />
           </article>
