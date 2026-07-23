@@ -6,7 +6,7 @@ Sales-optimised marketing site for Sardine Run Africa: 7-day sardine run expedit
 
 - **Next.js 15** (App Router, static generation) + **Tailwind CSS v4**
 - **Supabase**: enquiry form submissions (`enquiries` table, anon insert-only via RLS)
-- **Scroll-scrubbed cinematic hero**: three chained AI-generated ocean film legs (surface → the great shoal → the hunt), scrubbed by scroll position. Desktop plays native 16:9 1080p encodes; phones get a separately rendered native 9:16 portrait chain (720p, tight GOP for smooth phone seeking).
+- **Cinematic hero**: three chained AI-generated ocean film legs (surface → the great shoal → the hunt). Desktop scrubs the 16:9 1080p encodes by scroll position; phones play the separately rendered native 9:16 portrait chain (muted, looped, inline autoplay, which is reliable on iOS/Android where seek-scrubbing is not), with scroll driving scene crossfades and copy.
 
 ## Develop
 

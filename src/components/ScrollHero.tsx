@@ -1,20 +1,23 @@
 "use client";
 
 /**
- * Scroll-scrubbed cinematic hero: three chained legs rendered as one continuous
- * camera flight (surface → under the surface → the great shoal → the hunt).
+ * Cinematic hero. Two modes:
  *
- * Technique (adapted from the scroll-world scrub engine):
- *  - each clip is fetched as a Blob and played from an object URL (always seekable,
- *    regardless of host byte-range support)
- *  - scroll position maps to video.currentTime via rAF-smoothed lerp
- *  - seeks are coalesced: never issue a new currentTime while the decoder is mid-seek
- *    (stops fast flicks freezing the clip on phones)
- *  - native 9:16 mobile renders served on coarse-pointer/narrow viewports
- *  - posters stay visible until the video paints a real frame; videos are primed
- *    (muted play→pause) on first touch for iOS
- *  - height-only resizes (mobile URL bar) never re-run layout
- *  - prefers-reduced-motion: stills + copy only, no video
+ * DESKTOP (fine pointer, wide viewport): scroll-scrubbed film. Three chained
+ * legs rendered as one continuous camera flight (surface, the great shoal,
+ * the hunt); scroll position drives video.currentTime.
+ *  - clips fetched as Blobs and played from object URLs (always seekable)
+ *  - rAF-smoothed scrubbing with seek coalescing
+ *
+ * MOBILE (coarse pointer or <=860px): the native 9:16 portrait renders PLAY
+ * (muted, looped, playsinline) full-screen, one per scene; scroll switches
+ * scenes with a crossfade and drives the copy. No currentTime scrubbing on
+ * phones: seek-painting on never-played videos is unreliable on iOS Safari
+ * and low-end Android, while muted inline autoplay is universally supported.
+ *
+ * Shared hardening: posters stay until the video paints a real frame,
+ * height-only resizes (mobile URL bar) never re-run layout, and
+ * prefers-reduced-motion gets stills + copy only.
  */
 
 import Link from "next/link";
@@ -27,7 +30,7 @@ type Leg = {
   posterMobile?: string;
   /** viewport-heights of scroll this leg occupies */
   scroll: number;
-  /** 0..1: settle the camera mid-scene while copy peaks */
+  /** 0..1: settle the camera mid-scene while copy peaks (desktop scrub only) */
   linger: number;
   eyebrow: string;
   title: string;
@@ -92,7 +95,7 @@ type LegState = {
   video: HTMLVideoElement | null;
   loading: boolean;
   ready: boolean;
-  painted: boolean;
+  playing: boolean;
   cur: number;
   target: number;
   visible: boolean;
@@ -123,7 +126,7 @@ export default function ScrollHero() {
       video: null,
       loading: false,
       ready: false,
-      painted: false,
+      playing: false,
       cur: 0,
       target: 0,
       visible: false,
@@ -136,7 +139,6 @@ export default function ScrollHero() {
     let totalVh = 0;
     let raf = 0;
     let ticking = false;
-    let userReady = false;
     let disposed = false;
     const objectUrls: string[] = [];
 
@@ -154,62 +156,78 @@ export default function ScrollHero() {
       read();
     }
 
-    function primeVideo(v: HTMLVideoElement | null) {
-      if (!isMobile() || !v) return;
-      try {
-        const p = v.play();
-        if (p?.then)
-          p.then(() => {
-            try {
-              v.pause();
-            } catch {}
-          }).catch(() => {});
-      } catch {}
+    function markPainted(i: number) {
+      states[i].el?.classList.add("sra-painted");
     }
 
     function loadClip(i: number) {
       const s = states[i];
       if (s.loading || disposed) return;
       s.loading = true;
-      const url = isMobile() ? LEGS[i].clipMobile : LEGS[i].clip;
-      fetch(url)
-        .then((r) => (r.ok ? r.blob() : Promise.reject(new Error(String(r.status)))))
-        .then((blob) => {
-          if (disposed) return;
-          const v = document.createElement("video");
-          v.muted = true;
-          v.playsInline = true;
-          v.preload = "auto";
-          v.setAttribute("muted", "");
-          v.setAttribute("playsinline", "");
-          const obj = URL.createObjectURL(blob);
-          objectUrls.push(obj);
-          v.src = obj;
-          v.className = "absolute inset-0 h-full w-full object-cover";
-          v.addEventListener("loadedmetadata", () => {
-            s.ready = true;
-            read();
-          });
-          v.addEventListener(
-            "seeked",
-            () => {
-              s.painted = true;
-              s.el?.classList.add("sra-painted");
-            },
-            { once: true },
-          );
-          v.addEventListener("loadeddata", () => {
-            try {
-              v.pause();
-            } catch {}
-            if (userReady) primeVideo(v);
-          });
-          s.el?.appendChild(v);
-          s.video = v;
-        })
-        .catch(() => {
-          s.loading = false;
+      const mobile = isMobile();
+      const url = mobile ? LEGS[i].clipMobile : LEGS[i].clip;
+
+      const attach = (v: HTMLVideoElement) => {
+        v.muted = true;
+        v.playsInline = true;
+        v.preload = "auto";
+        v.setAttribute("muted", "");
+        v.setAttribute("playsinline", "");
+        v.setAttribute("webkit-playsinline", "");
+        if (mobile) v.loop = true;
+        v.className = "absolute inset-0 h-full w-full object-cover";
+        v.addEventListener("loadedmetadata", () => {
+          s.ready = true;
+          read();
         });
+        // Poster hides once a real frame exists: first successful seek
+        // (desktop scrub) or actual playback (mobile).
+        v.addEventListener("seeked", () => markPainted(i), { once: true });
+        v.addEventListener("playing", () => markPainted(i), { once: true });
+        v.addEventListener("timeupdate", () => markPainted(i), { once: true });
+        s.el?.appendChild(v);
+        s.video = v;
+        if (mobile) syncMobilePlayback();
+      };
+
+      if (mobile) {
+        // Phones: plain src + native progressive playback. No blob needed
+        // (we never seek), and streaming starts frames sooner on cellular.
+        const v = document.createElement("video");
+        v.src = url;
+        attach(v);
+      } else {
+        // Desktop: blob URL so the clip is fully seekable for scrubbing.
+        fetch(url)
+          .then((r) => (r.ok ? r.blob() : Promise.reject(new Error(String(r.status)))))
+          .then((blob) => {
+            if (disposed) return;
+            const v = document.createElement("video");
+            const obj = URL.createObjectURL(blob);
+            objectUrls.push(obj);
+            v.src = obj;
+            attach(v);
+          })
+          .catch(() => {
+            s.loading = false;
+          });
+      }
+    }
+
+    /** Mobile: exactly the visible scenes play; everything else pauses. */
+    function syncMobilePlayback() {
+      if (!isMobile()) return;
+      for (const s of states) {
+        if (!s.video) continue;
+        if (s.visible && !s.playing) {
+          s.playing = true;
+          const p = s.video.play();
+          if (p?.catch) p.catch(() => { s.playing = false; });
+        } else if (!s.visible && s.playing) {
+          s.playing = false;
+          try { s.video.pause(); } catch {}
+        }
+      }
     }
 
     function read() {
@@ -250,23 +268,26 @@ export default function ScrollHero() {
       }
 
       if (hintRef.current) hintRef.current.style.opacity = String(clamp(1 - y / (0.45 * vh)));
+      syncMobilePlayback();
       ticking = false;
     }
 
+    /** Desktop only: rAF loop maps smoothed scroll progress to currentTime. */
     function frame() {
-      const eps = isMobile() ? 0.02 : 0.008;
-      for (let i = 0; i < LEGS.length; i++) {
-        const s = states[i];
-        if (!s.ready || !s.video) continue;
-        if (s.video.seeking) continue;
-        if (!s.visible && Math.abs(s.cur - s.target) < 0.002) continue;
-        s.cur += (s.target - s.cur) * 0.18;
-        const dur = s.video.duration || 1;
-        const t = clamp(s.cur, 0, 0.999) * dur;
-        if (Math.abs(s.video.currentTime - t) > eps) {
-          try {
-            s.video.currentTime = t;
-          } catch {}
+      if (!isMobile()) {
+        for (let i = 0; i < LEGS.length; i++) {
+          const s = states[i];
+          if (!s.ready || !s.video) continue;
+          if (s.video.seeking) continue;
+          if (!s.visible && Math.abs(s.cur - s.target) < 0.002) continue;
+          s.cur += (s.target - s.cur) * 0.18;
+          const dur = s.video.duration || 1;
+          const t = clamp(s.cur, 0, 0.999) * dur;
+          if (Math.abs(s.video.currentTime - t) > 0.008) {
+            try {
+              s.video.currentTime = t;
+            } catch {}
+          }
         }
       }
       raf = requestAnimationFrame(frame);
@@ -282,17 +303,23 @@ export default function ScrollHero() {
       if (coarse && window.innerWidth === laidOutW) return; // URL-bar height change only
       layout();
     };
-    const onFirstGesture = () => {
-      if (userReady) return;
-      userReady = true;
-      states.forEach((s) => primeVideo(s.video));
+    const onVisibility = () => {
+      if (document.hidden) {
+        states.forEach((s) => {
+          if (s.playing && s.video) {
+            s.playing = false;
+            try { s.video.pause(); } catch {}
+          }
+        });
+      } else {
+        syncMobilePlayback();
+      }
     };
 
     window.addEventListener("scroll", onScroll, { passive: true });
     window.addEventListener("resize", onResize);
     window.addEventListener("orientationchange", layout);
-    window.addEventListener("pointerdown", onFirstGesture, { once: true, passive: true });
-    window.addEventListener("touchstart", onFirstGesture, { once: true, passive: true });
+    document.addEventListener("visibilitychange", onVisibility);
 
     layout();
     raf = requestAnimationFrame(frame);
@@ -303,8 +330,7 @@ export default function ScrollHero() {
       window.removeEventListener("scroll", onScroll);
       window.removeEventListener("resize", onResize);
       window.removeEventListener("orientationchange", layout);
-      window.removeEventListener("pointerdown", onFirstGesture);
-      window.removeEventListener("touchstart", onFirstGesture);
+      document.removeEventListener("visibilitychange", onVisibility);
       objectUrls.forEach((u) => URL.revokeObjectURL(u));
     };
   }, []);
