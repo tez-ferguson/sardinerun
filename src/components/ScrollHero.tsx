@@ -1,23 +1,23 @@
 "use client";
 
 /**
- * Cinematic hero. Two modes:
+ * Cinematic hero. One continuous camera flight (surface, the great shoal,
+ * the hunt) driven by scroll on every device, like the desktop film.
  *
- * DESKTOP (fine pointer, wide viewport): scroll-scrubbed film. Three chained
- * legs rendered as one continuous camera flight (surface, the great shoal,
- * the hunt); scroll position drives video.currentTime.
- *  - clips fetched as Blobs and played from object URLs (always seekable)
- *  - rAF-smoothed scrubbing with seek coalescing
+ * DESKTOP (fine pointer, wide viewport): the 16:9 1080p legs are fetched as
+ * Blobs (always seekable) and scrubbed via video.currentTime with rAF
+ * smoothing and seek coalescing.
  *
- * MOBILE (coarse pointer or <=860px): the native 9:16 portrait renders PLAY
- * (muted, looped, playsinline) full-screen, one per scene; scroll switches
- * scenes with a crossfade and drives the copy. No currentTime scrubbing on
- * phones: seek-painting on never-played videos is unreliable on iOS Safari
- * and low-end Android, while muted inline autoplay is universally supported.
+ * MOBILE (coarse pointer or <=860px): the native 9:16 portrait legs are
+ * pre-extracted to 96-frame WebP sequences and drawn to a full-screen
+ * <canvas> from scroll position (the technique behind Apple's scroll-driven
+ * product pages). No <video> element on phones at all: mobile decoders are
+ * unreliable at painting seeked frames on never-played videos, but drawing
+ * an image to canvas is deterministic on every browser. Scroll = time,
+ * scrubbing both directions, no autoplay, no looping.
  *
- * Shared hardening: posters stay until the video paints a real frame,
- * height-only resizes (mobile URL bar) never re-run layout, and
- * prefers-reduced-motion gets stills + copy only.
+ * Shared: posters until first real frame, crossfades between scenes,
+ * copy transitions, URL-bar resize guard, reduced-motion stills fallback.
  */
 
 import Link from "next/link";
@@ -25,12 +25,14 @@ import { useEffect, useRef, useState } from "react";
 
 type Leg = {
   clip: string;
-  clipMobile: string;
+  /** directory of f001..f{frames} webp frames for phones */
+  framesDir: string;
+  frames: number;
   poster?: string;
   posterMobile?: string;
   /** viewport-heights of scroll this leg occupies */
   scroll: number;
-  /** 0..1: settle the camera mid-scene while copy peaks (desktop scrub only) */
+  /** 0..1: settle the camera mid-scene while copy peaks */
   linger: number;
   eyebrow: string;
   title: string;
@@ -42,7 +44,8 @@ type Leg = {
 const LEGS: Leg[] = [
   {
     clip: "/video/leg1.mp4",
-    clipMobile: "/video/leg1-m.mp4",
+    framesDir: "/frames/leg1",
+    frames: 96,
     poster: "/video/poster-1.webp",
     posterMobile: "/video/poster-1-m.webp",
     scroll: 1.7,
@@ -54,7 +57,8 @@ const LEGS: Leg[] = [
   },
   {
     clip: "/video/leg2.mp4",
-    clipMobile: "/video/leg2-m.mp4",
+    framesDir: "/frames/leg2",
+    frames: 96,
     poster: "/video/poster-2.webp",
     posterMobile: "/video/poster-2-m.webp",
     scroll: 1.7,
@@ -66,7 +70,8 @@ const LEGS: Leg[] = [
   },
   {
     clip: "/video/leg3.mp4",
-    clipMobile: "/video/leg3-m.mp4",
+    framesDir: "/frames/leg3",
+    frames: 96,
     poster: "/video/poster-3.webp",
     posterMobile: "/video/poster-3-m.webp",
     scroll: 1.9,
@@ -92,10 +97,17 @@ const lingerEase = (x: number, L: number) => {
 
 type LegState = {
   el: HTMLDivElement | null;
+  // desktop
   video: HTMLVideoElement | null;
+  // mobile
+  canvas: HTMLCanvasElement | null;
+  ctx: CanvasRenderingContext2D | null;
+  images: (HTMLImageElement | null)[];
+  loadedCount: number;
+  drawnFrame: number;
+  painted: boolean;
   loading: boolean;
   ready: boolean;
-  playing: boolean;
   cur: number;
   target: number;
   visible: boolean;
@@ -104,7 +116,6 @@ type LegState = {
 };
 
 export default function ScrollHero() {
-  const rootRef = useRef<HTMLDivElement>(null);
   const trackRef = useRef<HTMLDivElement>(null);
   const sceneRefs = useRef<(HTMLDivElement | null)[]>([]);
   const copyRefs = useRef<(HTMLElement | null)[]>([]);
@@ -119,14 +130,20 @@ export default function ScrollHero() {
 
     const coarse = window.matchMedia("(hover: none) and (pointer: coarse)").matches;
     const smallMQ = window.matchMedia("(max-width: 860px)");
-    const isMobile = () => coarse || smallMQ.matches;
+    // Mode chosen once at mount: video-scrub vs canvas-frames.
+    const mobile = coarse || smallMQ.matches;
 
     const states: LegState[] = LEGS.map(() => ({
       el: null,
       video: null,
+      canvas: null,
+      ctx: null,
+      images: [],
+      loadedCount: 0,
+      drawnFrame: -1,
+      painted: false,
       loading: false,
       ready: false,
-      playing: false,
       cur: 0,
       target: 0,
       visible: false,
@@ -136,7 +153,6 @@ export default function ScrollHero() {
 
     let vh = window.innerHeight;
     let laidOutW = window.innerWidth;
-    let totalVh = 0;
     let raf = 0;
     let ticking = false;
     let disposed = false;
@@ -151,84 +167,137 @@ export default function ScrollHero() {
         off += l.scroll;
         states[i].end = off * vh;
       });
-      totalVh = off;
-      if (trackRef.current) trackRef.current.style.height = `${totalVh * 100}vh`;
+      if (trackRef.current) trackRef.current.style.height = `${off * 100}vh`;
+      if (mobile) states.forEach((s, i) => sizeCanvas(i));
       read();
     }
 
     function markPainted(i: number) {
-      states[i].el?.classList.add("sra-painted");
+      if (!states[i].painted) {
+        states[i].painted = true;
+        states[i].el?.classList.add("sra-painted");
+      }
     }
+
+    /* ---------- mobile: canvas frame sequence ---------- */
+
+    function frameUrl(i: number, f: number) {
+      return `${LEGS[i].framesDir}/f${String(f + 1).padStart(3, "0")}.webp`;
+    }
+
+    function sizeCanvas(i: number) {
+      const s = states[i];
+      if (!s.canvas) return;
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      const w = Math.round(window.innerWidth * dpr);
+      const h = Math.round(window.innerHeight * dpr);
+      if (s.canvas.width !== w || s.canvas.height !== h) {
+        s.canvas.width = w;
+        s.canvas.height = h;
+        s.drawnFrame = -1; // force redraw at new size
+      }
+    }
+
+    function drawFrame(i: number, idx: number) {
+      const s = states[i];
+      if (!s.ctx || !s.canvas) return;
+      // Fall back to the nearest loaded frame at or below idx.
+      let f = idx;
+      while (f >= 0 && !(s.images[f] && s.images[f]!.complete && s.images[f]!.naturalWidth)) f--;
+      if (f < 0) return;
+      if (f === s.drawnFrame) return;
+      const img = s.images[f]!;
+      const cw = s.canvas.width;
+      const ch = s.canvas.height;
+      // cover-fit crop
+      const scale = Math.max(cw / img.naturalWidth, ch / img.naturalHeight);
+      const dw = img.naturalWidth * scale;
+      const dh = img.naturalHeight * scale;
+      s.ctx.drawImage(img, (cw - dw) / 2, (ch - dh) / 2, dw, dh);
+      s.drawnFrame = f;
+      markPainted(i);
+    }
+
+    function loadFrames(i: number) {
+      const s = states[i];
+      if (s.loading || disposed) return;
+      s.loading = true;
+      if (!s.canvas && s.el) {
+        const c = document.createElement("canvas");
+        c.className = "absolute inset-0 h-full w-full";
+        s.el.appendChild(c);
+        s.canvas = c;
+        s.ctx = c.getContext("2d");
+        sizeCanvas(i);
+      }
+      const total = LEGS[i].frames;
+      s.images = new Array(total).fill(null);
+      let next = 0;
+      const CONCURRENCY = 6;
+      const pump = () => {
+        if (disposed) return;
+        while (next < total) {
+          const f = next++;
+          const img = new Image();
+          img.decoding = "async";
+          img.onload = () => {
+            s.loadedCount++;
+            if (s.loadedCount === 1) {
+              s.ready = true;
+              drawFrame(i, Math.round(s.cur * (total - 1)));
+            }
+            if (!disposed && s.loadedCount + (total - next) < total) pump();
+          };
+          img.onerror = () => {
+            if (!disposed) pump();
+          };
+          img.src = frameUrl(i, f);
+          s.images[f] = img;
+          if (next - (s.loadedCount) >= CONCURRENCY) break;
+        }
+      };
+      pump();
+    }
+
+    /* ---------- desktop: blob video scrub ---------- */
 
     function loadClip(i: number) {
       const s = states[i];
       if (s.loading || disposed) return;
       s.loading = true;
-      const mobile = isMobile();
-      const url = mobile ? LEGS[i].clipMobile : LEGS[i].clip;
-
-      const attach = (v: HTMLVideoElement) => {
-        v.muted = true;
-        v.playsInline = true;
-        v.preload = "auto";
-        v.setAttribute("muted", "");
-        v.setAttribute("playsinline", "");
-        v.setAttribute("webkit-playsinline", "");
-        if (mobile) v.loop = true;
-        v.className = "absolute inset-0 h-full w-full object-cover";
-        v.addEventListener("loadedmetadata", () => {
-          s.ready = true;
-          read();
-        });
-        // Poster hides once a real frame exists: first successful seek
-        // (desktop scrub) or actual playback (mobile).
-        v.addEventListener("seeked", () => markPainted(i), { once: true });
-        v.addEventListener("playing", () => markPainted(i), { once: true });
-        v.addEventListener("timeupdate", () => markPainted(i), { once: true });
-        s.el?.appendChild(v);
-        s.video = v;
-        if (mobile) syncMobilePlayback();
-      };
-
-      if (mobile) {
-        // Phones: plain src + native progressive playback. No blob needed
-        // (we never seek), and streaming starts frames sooner on cellular.
-        const v = document.createElement("video");
-        v.src = url;
-        attach(v);
-      } else {
-        // Desktop: blob URL so the clip is fully seekable for scrubbing.
-        fetch(url)
-          .then((r) => (r.ok ? r.blob() : Promise.reject(new Error(String(r.status)))))
-          .then((blob) => {
-            if (disposed) return;
-            const v = document.createElement("video");
-            const obj = URL.createObjectURL(blob);
-            objectUrls.push(obj);
-            v.src = obj;
-            attach(v);
-          })
-          .catch(() => {
-            s.loading = false;
+      fetch(LEGS[i].clip)
+        .then((r) => (r.ok ? r.blob() : Promise.reject(new Error(String(r.status)))))
+        .then((blob) => {
+          if (disposed) return;
+          const v = document.createElement("video");
+          v.muted = true;
+          v.playsInline = true;
+          v.preload = "auto";
+          v.setAttribute("muted", "");
+          v.setAttribute("playsinline", "");
+          const obj = URL.createObjectURL(blob);
+          objectUrls.push(obj);
+          v.src = obj;
+          v.className = "absolute inset-0 h-full w-full object-cover";
+          v.addEventListener("loadedmetadata", () => {
+            s.ready = true;
+            read();
           });
-      }
+          v.addEventListener("seeked", () => markPainted(i), { once: true });
+          v.addEventListener("loadeddata", () => {
+            try {
+              v.pause();
+            } catch {}
+          });
+          s.el?.appendChild(v);
+          s.video = v;
+        })
+        .catch(() => {
+          s.loading = false;
+        });
     }
 
-    /** Mobile: exactly the visible scenes play; everything else pauses. */
-    function syncMobilePlayback() {
-      if (!isMobile()) return;
-      for (const s of states) {
-        if (!s.video) continue;
-        if (s.visible && !s.playing) {
-          s.playing = true;
-          const p = s.video.play();
-          if (p?.catch) p.catch(() => { s.playing = false; });
-        } else if (!s.visible && s.playing) {
-          s.playing = false;
-          try { s.video.pause(); } catch {}
-        }
-      }
-    }
+    /* ---------- shared scroll mapping ---------- */
 
     function read() {
       const y = window.scrollY;
@@ -239,7 +308,10 @@ export default function ScrollHero() {
       for (let i = 0; i < LEGS.length; i++) {
         const s = states[i];
         if (!s.el) s.el = sceneRefs.current[i];
-        if (y > s.start - 1.7 * vh && y < s.end + 1.7 * vh) loadClip(i);
+        if (y > s.start - 1.7 * vh && y < s.end + 1.7 * vh) {
+          if (mobile) loadFrames(i);
+          else loadClip(i);
+        }
         const local = clamp((y - s.start) / (s.end - s.start));
         s.target = LEGS[i].linger ? lingerEase(local, LEGS[i].linger) : local;
         let outside = 0;
@@ -268,19 +340,18 @@ export default function ScrollHero() {
       }
 
       if (hintRef.current) hintRef.current.style.opacity = String(clamp(1 - y / (0.45 * vh)));
-      syncMobilePlayback();
       ticking = false;
     }
 
-    /** Desktop only: rAF loop maps smoothed scroll progress to currentTime. */
     function frame() {
-      if (!isMobile()) {
-        for (let i = 0; i < LEGS.length; i++) {
-          const s = states[i];
-          if (!s.ready || !s.video) continue;
-          if (s.video.seeking) continue;
-          if (!s.visible && Math.abs(s.cur - s.target) < 0.002) continue;
-          s.cur += (s.target - s.cur) * 0.18;
+      for (let i = 0; i < LEGS.length; i++) {
+        const s = states[i];
+        if (!s.ready) continue;
+        if (!s.visible && Math.abs(s.cur - s.target) < 0.002) continue;
+        s.cur += (s.target - s.cur) * 0.18;
+        if (mobile) {
+          drawFrame(i, Math.round(clamp(s.cur) * (LEGS[i].frames - 1)));
+        } else if (s.video && !s.video.seeking) {
           const dur = s.video.duration || 1;
           const t = clamp(s.cur, 0, 0.999) * dur;
           if (Math.abs(s.video.currentTime - t) > 0.008) {
@@ -303,25 +374,15 @@ export default function ScrollHero() {
       if (coarse && window.innerWidth === laidOutW) return; // URL-bar height change only
       layout();
     };
-    const onVisibility = () => {
-      if (document.hidden) {
-        states.forEach((s) => {
-          if (s.playing && s.video) {
-            s.playing = false;
-            try { s.video.pause(); } catch {}
-          }
-        });
-      } else {
-        syncMobilePlayback();
-      }
-    };
 
     window.addEventListener("scroll", onScroll, { passive: true });
     window.addEventListener("resize", onResize);
     window.addEventListener("orientationchange", layout);
-    document.addEventListener("visibilitychange", onVisibility);
 
     layout();
+    // Load the opening scene immediately so the film is live on arrival.
+    if (mobile) loadFrames(0);
+    else loadClip(0);
     raf = requestAnimationFrame(frame);
 
     return () => {
@@ -330,7 +391,6 @@ export default function ScrollHero() {
       window.removeEventListener("scroll", onScroll);
       window.removeEventListener("resize", onResize);
       window.removeEventListener("orientationchange", layout);
-      document.removeEventListener("visibilitychange", onVisibility);
       objectUrls.forEach((u) => URL.revokeObjectURL(u));
     };
   }, []);
@@ -354,7 +414,7 @@ export default function ScrollHero() {
   }
 
   return (
-    <div ref={rootRef} className="relative">
+    <div className="relative">
       {/* Fixed stage */}
       <div className="fixed inset-0 z-0" aria-hidden>
         {LEGS.map((l, i) => (
@@ -365,7 +425,7 @@ export default function ScrollHero() {
             }}
             className="sra-scene absolute inset-0 overflow-hidden opacity-0 will-change-[opacity]"
           >
-            {/* poster stays until the clip paints (iOS blank-frame guard) */}
+            {/* poster stays until the film paints its first real frame */}
             <picture>
               {l.posterMobile && <source media="(max-width: 860px)" srcSet={l.posterMobile} />}
               <img src={l.poster} alt="" className="sra-poster absolute inset-0 h-full w-full object-cover" loading={i === 0 ? "eager" : "lazy"} />
@@ -409,7 +469,8 @@ export default function ScrollHero() {
         .sra-scene.sra-painted .sra-poster {
           opacity: 0;
         }
-        .sra-scene video {
+        .sra-scene video,
+        .sra-scene canvas {
           z-index: 1;
         }
       `}</style>
